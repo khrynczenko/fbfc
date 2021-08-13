@@ -68,6 +68,7 @@ pub struct BannedFunction {
 #[derive(Clone, Debug)]
 pub struct BannedFunctionUsage<'a> {
     pub function: &'static BannedFunction,
+    pub file: String,
     pub line: usize,
     pub content: String,
     pub possible_fix: &'a str,
@@ -77,6 +78,7 @@ impl<'a> Display for BannedFunctionUsage<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         writeln!(f, "Category:      {:?}", self.function.category)?;
         writeln!(f, "Function name: {}", self.function.name)?;
+        writeln!(f, "File:          {}", self.file)?;
         writeln!(f, "Line #:        {}", self.line)?;
         writeln!(f, "Line:          {}", self.content)?;
         writeln!(f, "Possible fix:  {}", self.function.possible_fix)
@@ -119,6 +121,7 @@ pub fn analyze_source_file<I: Iterator<Item = &'static BannedFunction> + Clone>(
         })
         .map(|((i, line), function)| BannedFunctionUsage {
             function,
+            file: String::from(file.to_str().unwrap()),
             line: i,
             content: line.to_string(),
             possible_fix: function.possible_fix,
