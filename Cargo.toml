@@ -1,5 +1,7 @@
 [package]
 name = "fbfc"
+authors = ["Krzysztof Hrynczenko"]
+description = "Find banned function calls in C/C++ source files."
 version = "0.1.0"
 edition = "2018"
 

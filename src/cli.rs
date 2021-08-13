@@ -1,5 +1,9 @@
-use clap::App;
-use clap::Arg;
+use clap::{App, Arg};
+
+const ABOUT: &str = "
+Find banned function calls in C/C++ source files according
+to the \"Security Development Lifecycle (SDL) Banned Function Calls\" article.
+";
 
 pub struct CliArguments {
     pub searched_directory: String,
@@ -8,29 +12,25 @@ pub struct CliArguments {
 }
 
 pub fn run_cli() -> CliArguments {
-    let matches = App::new("fbfc")
-        .version("0.1.0")
-        .author("Krzysztof Hrynczenko")
-        .about(concat!(
-            "Finds banned function calls in C/C++ source files according",
-            "to the \"Security Development Lifecycle (SDL) Banned Function Calls\" article."
-        ))
+    let matches = App::new(env!("CARGO_PKG_NAME"))
+        .version(env!("CARGO_PKG_VERSION"))
+        .about(ABOUT)
         .arg(
             Arg::with_name("DIRECTORY")
                 .required(true)
-                .help("search directory"),
+                .help("Searched directory"),
         )
         .arg(
             Arg::with_name("r")
                 .short("r")
                 .required(false)
-                .help("search recursively within directory"),
+                .help("Search recursively within the directory"),
         )
         .arg(
             Arg::with_name("only-summary")
                 .long("only-summary")
                 .required(false)
-                .help("output only a summary"),
+                .help("Output only the summary"),
         )
         .get_matches();
 
