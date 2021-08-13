@@ -1,55 +1,50 @@
 use crate::analysis::{BannedFunction, BannedFunctionCategory};
 
-const STRING_COPY_POSSIBLE_FIX: &'static str =
-    "Use String*1Copy or String*CopyEx or strcpy_s function.";
+const STRING_COPY_POSSIBLE_FIX: &str = "Use String*1Copy or String*CopyEx or strcpy_s function.";
 
-const STRING_CONCAT_POSSIBLE_FIX: &'static str =
-    "Use String*Cat or String*CatEx or strcat_s function.";
+const STRING_CONCAT_POSSIBLE_FIX: &str = "Use String*Cat or String*CatEx or strcat_s function.";
 
-const SPRINTF_POSSIBLE_FIX: &'static str =
-    "Use String*Printf or String*PrintfEx or sprintf_s function.";
+const SPRINTF_POSSIBLE_FIX: &str = "Use String*Printf or String*PrintfEx or sprintf_s function.";
 
-const NSPRINTF_POSSIBLE_FIX: &'static str =
+const NSPRINTF_POSSIBLE_FIX: &str =
     "Use String*Printf or String*PrintfEx _snprintf_s or _snwprintf_s function.";
 
-const VAR_ARG_SPRINTF_POSSIBLE_FIX: &'static str =
+const VAR_ARG_SPRINTF_POSSIBLE_FIX: &str =
     "Use String*VPrintf or String*VPrintfEx or _vstprintf_s function.";
 
-const VAR_ARG_NSPRINTF_POSSIBLE_FIX: &'static str =
+const VAR_ARG_NSPRINTF_POSSIBLE_FIX: &str =
     "Use String*VPrintf or String*VPrintfEx or vsntprintf_s function.";
 
-const NSTRING_COPY_POSSIBLE_FIX: &'static str =
+const NSTRING_COPY_POSSIBLE_FIX: &str = "Use String*CopyN or String*CopyNEx or strncpy_s function.";
+
+const NSTRING_CONCAT_POSSIBLE_FIX: &str =
     "Use String*CopyN or String*CopyNEx or strncpy_s function.";
 
-const NSTRING_CONCAT_POSSIBLE_FIX: &'static str =
-    "Use String*CopyN or String*CopyNEx or strncpy_s function.";
+const STRING_TOKEN_POSSIBLE_FIX: &str = "Use strtok_s function.";
 
-const STRING_TOKEN_POSSIBLE_FIX: &'static str = "Use strtok_s function.";
+const MAKEPATH_POSSIBLE_FIX: &str = "Use _makepath_s function.";
 
-const MAKEPATH_POSSIBLE_FIX: &'static str = "Use _makepath_s function.";
+const SPLITPATH_POSSIBLE_FIX: &str = "Use _splitpath_s function.";
 
-const SPLITPATH_POSSIBLE_FIX: &'static str = "Use _splitpath_s function.";
+const SCANF_POSSIBLE_FIX: &str = "Use sscanf_s function.";
 
-const SCANF_POSSIBLE_FIX: &'static str = "Use sscanf_s function.";
+const NSCANF_POSSIBLE_FIX: &str = "Use _snscanf_s function.";
 
-const NSCANF_POSSIBLE_FIX: &'static str = "Use _snscanf_s function.";
+const NUMERIC_CONVERSION_POSSIBLE_FIX: &str = "Use _itoa_s or _itow_s function.";
 
-const NUMERIC_CONVERSION_POSSIBLE_FIX: &'static str = "Use _itoa_s or _itow_s function.";
+const GETS_POSSIBLE_FIX: &str = "Use String*Gets or gets_s function.";
 
-const GETS_POSSIBLE_FIX: &'static str = "Use String*Gets or gets_s function.";
+const IS_BAD_POSSIBLE_FIX: &str = "No corresponding replacements. Avoid using these functions.";
 
-const IS_BAD_POSSIBLE_FIX: &'static str =
-    "No corresponding replacements. Avoid using these functions.";
+const OEM_POSSIBLE_FIX: &str = "Use WideCharToMultiByte function.";
 
-const OEM_POSSIBLE_FIX: &'static str = "Use WideCharToMultiByte function.";
+const ALLOCATION_POSSIBLE_FIX: &str = "Use SafeAllocA function.";
 
-const ALLOCATION_POSSIBLE_FIX: &'static str = "Use SafeAllocA function.";
+const STRING_LENGTH_POSSIBLE_FIX: &str = "Use String*Length or strnlen_s function.";
 
-const STRING_LENGTH_POSSIBLE_FIX: &'static str = "Use String*Length or strnlen_s function.";
+const MEMORY_COPY_POSSIBLE_FIX: &str = "Use memcpy_s or wmemcpy_s function.";
 
-const MEMORY_COPY_POSSIBLE_FIX: &'static str = "Use memcpy_s or wmemcpy_s function.";
-
-const WINDOW_MESSAGING_POSSIBLE_FIX: &'static str = "Use ChangeWindowMessageFilterEx function.";
+const WINDOW_MESSAGING_POSSIBLE_FIX: &str = "Use ChangeWindowMessageFilterEx function.";
 
 pub const BANNED_FUNCTIONS: [BannedFunction; 199] = [
     BannedFunction {

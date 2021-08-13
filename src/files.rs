@@ -12,10 +12,10 @@ pub enum Extension {
 impl AsRef<str> for Extension {
     fn as_ref(&self) -> &str {
         match self {
-            &Extension::Hpp => "hpp",
-            &Extension::H => "h",
-            &Extension::Cpp => "cpp",
-            &Extension::C => "c",
+            Extension::Hpp => "hpp",
+            Extension::H => "h",
+            Extension::Cpp => "cpp",
+            Extension::C => "c",
         }
     }
 }
@@ -36,7 +36,7 @@ pub fn find_source_files(path: &Path, extensions: &[Extension]) -> Vec<PathBuf> 
     let files = paths.filter(|path| path.is_file());
     let sources = files.filter(|path| has_proper_extension(path, &extensions));
 
-    return sources.collect();
+    sources.collect()
 }
 
 pub fn find_source_files_recursively(path: &Path, extensions: &[Extension]) -> Vec<PathBuf> {
@@ -53,5 +53,5 @@ pub fn find_source_files_recursively(path: &Path, extensions: &[Extension]) -> V
         sources.extend(find_source_files(&directory, extensions));
     }
 
-    return sources;
+    sources
 }

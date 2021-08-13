@@ -37,9 +37,9 @@ pub fn run_cli() -> CliArguments {
     let recursive_search = matches.is_present("r");
     let searched_directory = matches.value_of("DIRECTORY").unwrap().to_string(); // DIRECTORY is requried so unwrap cannot fail (unless arguments is not UTF8)
     let only_summary = matches.is_present("only-summary");
-    return CliArguments {
+    CliArguments {
         searched_directory,
         recursive_search,
         only_summary,
-    };
+    }
 }
