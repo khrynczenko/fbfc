@@ -26,7 +26,7 @@ use files::Extension;
 pub fn analyze_source_file<I: Iterator<Item = &'static BannedFunction> + Clone>(
     file: &Path,
     banned_functions: I,
-) -> Vec<BannedFunctionUsage<'static>> {
+) -> Vec<BannedFunctionUsage> {
     let contents = fs::read_to_string(file).unwrap();
     analysis::analyze_source_code(file, &contents, banned_functions)
 }
@@ -34,7 +34,7 @@ pub fn analyze_source_file<I: Iterator<Item = &'static BannedFunction> + Clone>(
 pub fn find_banned_usages<I: Iterator<Item = &'static BannedFunction> + Clone>(
     files: &[PathBuf],
     banned_functions: I,
-) -> Vec<BannedFunctionUsage<'static>> {
+) -> Vec<BannedFunctionUsage> {
     files
         .iter()
         .flat_map(|file| analyze_source_file(file, banned_functions.clone()))

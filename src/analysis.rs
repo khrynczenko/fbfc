@@ -65,15 +65,14 @@ pub struct BannedFunction {
 }
 
 #[derive(Clone, Debug)]
-pub struct BannedFunctionUsage<'a> {
+pub struct BannedFunctionUsage {
     pub function: &'static BannedFunction,
     pub file: String,
     pub line: usize,
     pub content: String,
-    pub possible_fix: &'a str,
 }
 
-impl<'a> Display for BannedFunctionUsage<'a> {
+impl Display for BannedFunctionUsage {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         writeln!(f, "Category:      {:?}", self.function.category)?;
         writeln!(f, "Function name: {}", self.function.name)?;
@@ -108,7 +107,7 @@ pub fn analyze_source_code<I: Iterator<Item = &'static BannedFunction> + Clone>(
     corresponding_file_path: &Path,
     source_code: &str,
     banned_functions: I,
-) -> Vec<BannedFunctionUsage<'static>> {
+) -> Vec<BannedFunctionUsage> {
     source_code
         .lines()
         .enumerate()
@@ -122,13 +121,12 @@ pub fn analyze_source_code<I: Iterator<Item = &'static BannedFunction> + Clone>(
             file: String::from(corresponding_file_path.to_str().unwrap()),
             line: i + 1,
             content: line.to_string(),
-            possible_fix: function.possible_fix,
         })
         .collect()
 }
 
 pub fn create_summary(
-    found_banned_usages: &[BannedFunctionUsage<'static>],
+    found_banned_usages: &[BannedFunctionUsage],
     active_categories: &[BannedFunctionCategory],
 ) -> Summary {
     Summary {
