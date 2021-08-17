@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
-use std::fs;
 use std::path::Path;
 
 use itertools::Itertools;
@@ -105,13 +104,12 @@ impl Display for Summary {
     }
 }
 
-pub fn analyze_source_file<I: Iterator<Item = &'static BannedFunction> + Clone>(
-    file: &Path,
+pub fn analyze_source_code<I: Iterator<Item = &'static BannedFunction> + Clone>(
+    corresponding_file_path: &Path,
+    source_code: &str,
     banned_functions: I,
 ) -> Vec<BannedFunctionUsage<'static>> {
-    let contents = fs::read_to_string(file).unwrap();
-
-    contents
+    source_code
         .lines()
         .enumerate()
         .cartesian_product(banned_functions)
@@ -121,7 +119,7 @@ pub fn analyze_source_file<I: Iterator<Item = &'static BannedFunction> + Clone>(
         })
         .map(|((i, line), function)| BannedFunctionUsage {
             function,
-            file: String::from(file.to_str().unwrap()),
+            file: String::from(corresponding_file_path.to_str().unwrap()),
             line: i,
             content: line.to_string(),
             possible_fix: function.possible_fix,

@@ -14,6 +14,8 @@ mod cli;
 mod files;
 mod print;
 
+use std::fs;
+use std::path::Path;
 use std::path::PathBuf;
 use std::process;
 
@@ -21,13 +23,21 @@ use analysis::{BannedFunction, BannedFunctionCategory, BannedFunctionUsage};
 use banned::BANNED_FUNCTIONS;
 use files::Extension;
 
+pub fn analyze_source_file<I: Iterator<Item = &'static BannedFunction> + Clone>(
+    file: &Path,
+    banned_functions: I,
+) -> Vec<BannedFunctionUsage<'static>> {
+    let contents = fs::read_to_string(file).unwrap();
+    analysis::analyze_source_code(file, &contents, banned_functions)
+}
+
 pub fn find_banned_usages<I: Iterator<Item = &'static BannedFunction> + Clone>(
     files: &[PathBuf],
     banned_functions: I,
 ) -> Vec<BannedFunctionUsage<'static>> {
     files
         .iter()
-        .flat_map(|file| analysis::analyze_source_file(file, banned_functions.clone()))
+        .flat_map(|file| analyze_source_file(file, banned_functions.clone()))
         .collect()
 }
 
