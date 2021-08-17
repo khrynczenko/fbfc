@@ -120,7 +120,7 @@ pub fn analyze_source_code<I: Iterator<Item = &'static BannedFunction> + Clone>(
         .map(|((i, line), function)| BannedFunctionUsage {
             function,
             file: String::from(corresponding_file_path.to_str().unwrap()),
-            line: i,
+            line: i + 1,
             content: line.to_string(),
             possible_fix: function.possible_fix,
         })
