@@ -64,7 +64,7 @@ pub struct BannedFunction {
     pub possible_fix: &'static str,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct BannedFunctionUsage {
     pub function: &'static BannedFunction,
     pub file: String,
@@ -83,7 +83,7 @@ impl Display for BannedFunctionUsage {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Summary {
     pub found_usages_count: usize,
     pub found_usages_count_per_category: HashMap<BannedFunctionCategory, usize>,
@@ -143,5 +143,106 @@ pub fn create_summary(
                 )
             })
             .collect(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::PathBuf;
+
+    fn create_expected_results() -> (PathBuf, String, Vec<BannedFunctionUsage>) {
+        let path = Path::new("arbitrary_path");
+        let source = "int main() { strcpy() }";
+        let provided_banned_functions = &[BannedFunction {
+            category: BannedFunctionCategory::MemoryCopy,
+            name: "strcpy",
+            possible_fix: "strcpy_s",
+        }];
+
+        (
+            path.to_owned(),
+            String::from(source),
+            vec![BannedFunctionUsage {
+                function: &provided_banned_functions[0],
+                file: String::from(path.to_str().unwrap()),
+                line: 1,
+                content: String::from(source),
+            }],
+        )
+    }
+
+    #[test]
+    fn analyzing_source_code_without_banned_functions_provided() {
+        let path = Path::new("arbitrary_path");
+        let source = "int main() { strcpy() }";
+
+        let found_usages = analyze_source_code(&path, &source, [].iter());
+
+        assert_eq!(found_usages, Vec::new());
+    }
+
+    #[test]
+    fn analyzing_source_code_with_banned_functions_provided() {
+        let test_data = create_expected_results();
+        let path = test_data.0;
+        let source = test_data.1;
+        let provided_banned_functions = &[BannedFunction {
+            category: BannedFunctionCategory::MemoryCopy,
+            name: "strcpy",
+            possible_fix: "strcpy_s",
+        }];
+
+        let found_usages = analyze_source_code(&path, &source, provided_banned_functions.iter());
+
+        let expected_usages = test_data.2;
+        assert_eq!(found_usages, expected_usages);
+    }
+
+    #[test]
+    fn analyzing_empty_source_code() {
+        let path = Path::new("arbitrary_path");
+        let source = "";
+        let provided_banned_functions = &[BannedFunction {
+            category: BannedFunctionCategory::MemoryCopy,
+            name: "strcpy",
+            possible_fix: "strcpy_s",
+        }];
+
+        let found_usages = analyze_source_code(&path, &source, provided_banned_functions.iter());
+
+        assert_eq!(found_usages, vec![]);
+    }
+
+    #[test]
+    fn creating_summary_without_found_usages() {
+        let found_banned_usages = vec![];
+
+        let summary = create_summary(&found_banned_usages, &[BannedFunctionCategory::MemoryCopy]);
+
+        let expected_summary = Summary {
+            found_usages_count: 0,
+            found_usages_count_per_category: [(BannedFunctionCategory::MemoryCopy, 0)]
+                .iter()
+                .cloned()
+                .collect(),
+        };
+        assert_eq!(summary, expected_summary);
+    }
+
+    #[test]
+    fn creating_summary_with_found_usages() {
+        let found_banned_usages = create_expected_results().2;
+
+        let summary = create_summary(&found_banned_usages, &[BannedFunctionCategory::MemoryCopy]);
+
+        let expected_summary = Summary {
+            found_usages_count: 1,
+            found_usages_count_per_category: [(BannedFunctionCategory::MemoryCopy, 1)]
+                .iter()
+                .cloned()
+                .collect(),
+        };
+        assert_eq!(summary, expected_summary);
     }
 }
